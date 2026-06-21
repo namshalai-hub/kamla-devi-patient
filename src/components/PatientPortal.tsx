@@ -206,11 +206,11 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
           <div className="rx-watermark">Rx</div>
           
           <div className="prescription-print-header" style={{ flexDirection: 'column', borderBottom: 'none', marginBottom: '20px', paddingBottom: 0, display: 'flex', gap: '12px' }}>
-            {/* Hardcoded header details for letterhead styling if no image banner */}
-            <div style={{ textAlign: 'center', borderBottom: '2px solid var(--primary)', paddingBottom: '12px', marginBottom: '12px' }}>
-              <h1 style={{ fontSize: '24px', fontWeight: 800, color: 'var(--primary)', textTransform: 'uppercase', margin: 0 }}>Kamla Devi Hospital</h1>
-              <p style={{ fontSize: '11px', color: 'var(--text-light)', margin: '2px 0 0 0', textTransform: 'uppercase', letterSpacing: '1px' }}>EMR & Fertility Portal</p>
-            </div>
+            <img 
+              src="/prescription_header.png" 
+              alt="Kamla Devi Hospital Letterhead" 
+              style={{ width: '100%', height: 'auto', borderRadius: '4px', display: 'block' }} 
+            />
             <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '2px solid var(--border)', paddingBottom: '8px', marginTop: '8px' }}>
               <span className="prescription-print-title" style={{ fontSize: '14px', fontWeight: 700, color: 'var(--primary)' }}>PRESCRIPTION CASE CARD</span>
               <div style={{ display: 'flex', gap: '20px', fontSize: '12px', color: 'var(--text-muted)' }}>

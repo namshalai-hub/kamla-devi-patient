@@ -14,10 +14,14 @@ interface PatientLoginProps {
 }
 
 const normalizePhone = (num: string): string => {
-  const digits = num.replace(/\D/g, '');
+  let digits = num.replace(/\D/g, '');
   // Match standard 10-digit Indian numbers if prefixed with 91
   if (digits.length === 12 && digits.startsWith('91')) {
     return digits.slice(2);
+  }
+  // Strip leading zero if 11 digits starting with 0
+  if (digits.length === 11 && digits.startsWith('0')) {
+    return digits.slice(1);
   }
   return digits;
 };
@@ -36,6 +40,27 @@ export const PatientLogin: React.FC<PatientLoginProps> = ({ onLoginSuccess }) =>
   const [loading, setLoading] = useState<boolean>(false);
   const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
   const [matchedPatient, setMatchedPatient] = useState<Patient | null>(null);
+
+  const handlePhoneChange = (val: string) => {
+    // Keep only digits and plus sign (to allow pasting +91)
+    let cleaned = val.replace(/[^\d+]/g, '');
+    
+    // Convert to digits only
+    let digits = cleaned.replace(/\D/g, '');
+    
+    // Smart cleaning: if the user typed/pasted a long number starting with country code or zero
+    if (digits.length > 10) {
+      if (digits.startsWith('91')) {
+        digits = digits.slice(2);
+      } else if (digits.startsWith('0')) {
+        digits = digits.slice(1);
+      }
+    } else if (digits.length === 11 && digits.startsWith('0')) {
+      digits = digits.slice(1);
+    }
+    
+    setPhone(digits.slice(0, 10));
+  };
 
   const recaptchaContainerRef = useRef<HTMLDivElement>(null);
   const recaptchaVerifierRef = useRef<RecaptchaVerifier | null>(null);
@@ -256,7 +281,7 @@ export const PatientLogin: React.FC<PatientLoginProps> = ({ onLoginSuccess }) =>
                   type="tel"
                   placeholder="Enter 10-digit number..."
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                  onChange={(e) => handlePhoneChange(e.target.value)}
                   className="form-control"
                   style={{
                     height: '42px',

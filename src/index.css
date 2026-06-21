@@ -1443,7 +1443,8 @@ h1, h2, h3, h4, h5, h6 {
   .iui-summary-view-card .btn,
   .preconception-summary-view-card .btn,
   .embryo-upload-section,
-  .embryo-gallery-delete {
+  .embryo-gallery-delete,
+  .no-print {
     display: none !important;
   }
 

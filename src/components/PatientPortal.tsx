@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { Patient, Appointment, ConsultationRecord } from '../types/crm';
+import type { Patient, Appointment, ConsultationRecord, PathologyReport } from '../types/crm';
 import { LogOut, Heart, Calendar, Clock, Clipboard, Pill, Download, Bell, Activity, Camera, Image as ImageIcon, Trash2, Printer } from 'lucide-react';
 
 const compressImage = (file: File, maxWidth = 1200, maxHeight = 1200, quality = 0.75): Promise<string> => {
@@ -76,6 +76,7 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
   const [activePreviewReportAttachment, setActivePreviewReportAttachment] = useState<string | null>(null);
 
   const [activePrintRx, setActivePrintRx] = useState<ConsultationRecord | null>(null);
+  const [activePrintReport, setActivePrintReport] = useState<PathologyReport | null>(null);
 
   // Filter appointments for this patient
   const myAppointments = appointments.filter(app => app.patientId === patient.id);
@@ -198,6 +199,84 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
     setReportAttachment(undefined);
     alert('Lab report uploaded successfully!');
   };
+
+  if (activePrintReport) {
+    return (
+      <div className="patient-portal-layout print-mode" style={{ minHeight: '100vh', background: 'var(--bg-app)', color: 'var(--text-main)', padding: '24px' }}>
+        <div className="glass-card prescription-view-card animate-scale-in">
+          <div className="rx-watermark" style={{ fontSize: '70px', color: 'hsla(180, 50%, 45%, 0.03)' }}>LAB</div>
+          
+          <div className="prescription-print-header" style={{ flexDirection: 'column', borderBottom: 'none', marginBottom: '20px', paddingBottom: 0, display: 'flex', gap: '12px' }}>
+            <img 
+              src="/prescription_header.png" 
+              alt="Kamla Devi Hospital Letterhead" 
+              style={{ width: '100%', height: 'auto', borderRadius: '4px', display: 'block' }} 
+            />
+            <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '2px solid var(--border)', paddingBottom: '8px', marginTop: '8px' }}>
+              <span className="prescription-print-title" style={{ fontSize: '14px', fontWeight: 700, color: 'var(--primary)' }}>PATHOLOGY & LABORATORY REPORT</span>
+              <div style={{ display: 'flex', gap: '20px', fontSize: '12px', color: 'var(--text-muted)' }}>
+                <span><strong>Date:</strong> {activePrintReport.date}</span>
+                <span><strong>Report Ref:</strong> {activePrintReport.id}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="prescription-patient-info" style={{ gridTemplateColumns: 'repeat(3, 1fr)', marginBottom: '20px' }}>
+            <div><strong>Patient Name:</strong> {patient.name}</div>
+            <div><strong>Age:</strong> {patient.age} years</div>
+            <div><strong>Blood Group:</strong> {patient.bloodGroup}</div>
+            <div><strong>Obstetric Score:</strong> G{patient.obstetricHistory.gravidity} P{patient.obstetricHistory.parity} A{patient.obstetricHistory.abortions} L{patient.obstetricHistory.living}</div>
+            <div><strong>Allergies:</strong> {patient.allergies.join(', ') || 'NKDA'}</div>
+          </div>
+
+          <div style={{ marginBottom: '20px' }}>
+            <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--primary)', marginBottom: '4px' }}>{activePrintReport.testName}</h3>
+            <span style={{ fontSize: '12px', color: 'var(--text-light)' }}>
+              Laboratory: <strong>{activePrintReport.labName}</strong>
+            </span>
+          </div>
+
+          <div style={{ background: '#fcfcfc', border: '1px solid #eee', padding: '16px', borderRadius: '8px', marginBottom: '20px' }}>
+            <strong style={{ fontSize: '11px', textTransform: 'uppercase', color: 'var(--text-light)', display: 'block', marginBottom: '6px' }}>Result / Findings:</strong>
+            <p style={{ fontWeight: 700, fontSize: '16px', color: 'var(--text-main)', margin: 0 }}>{activePrintReport.result}</p>
+          </div>
+
+          {activePrintReport.notes && (
+            <div style={{ marginBottom: '24px' }}>
+               <strong style={{ fontSize: '11px', textTransform: 'uppercase', color: 'var(--text-light)', display: 'block', marginBottom: '4px' }}>Report Notes:</strong>
+               <p style={{ fontSize: '13px', color: 'var(--text-main)', margin: 0, fontStyle: 'italic' }}>{activePrintReport.notes}</p>
+            </div>
+          )}
+
+          {activePrintReport.attachmentUrl && (
+            <div className="no-print" style={{ borderTop: '1px dashed var(--border)', paddingTop: '16px', marginTop: '16px' }}>
+              <strong style={{ fontSize: '11px', textTransform: 'uppercase', color: 'var(--text-light)', display: 'block', marginBottom: '8px' }}>Report Attachment Preview (Will print on next page):</strong>
+              <div style={{ maxWidth: '100%', maxHeight: '400px', overflow: 'hidden', border: '1px solid var(--border)', borderRadius: '6px' }}>
+                <img src={activePrintReport.attachmentUrl} alt="Report Attachment" style={{ width: '100%', height: 'auto', display: 'block' }} />
+              </div>
+            </div>
+          )}
+
+          {/* Actions */}
+          <div className="prescription-actions" style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '30px', borderTop: '1px solid var(--border)', paddingTop: '20px' }}>
+            <button 
+              onClick={() => window.print()} 
+              className="btn btn-primary"
+              style={{ display: 'flex', gap: '6px', alignItems: 'center' }}
+            >
+              <Printer size={16} /> Print Report
+            </button>
+            <button 
+              onClick={() => setActivePrintReport(null)} 
+              className="btn btn-secondary"
+            >
+              Close Report
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (activePrintRx) {
     return (
@@ -699,17 +778,35 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
                         </p>
                       )}
 
-                      {report.attachmentUrl && (
-                        <div style={{ marginTop: '10px', borderTop: '1px dashed var(--border)', paddingTop: '8px' }}>
-                          <button 
-                            onClick={() => setActivePreviewReportAttachment(report.attachmentUrl || null)}
-                            className="btn btn-secondary"
-                            style={{ padding: '4px 8px', fontSize: '11px', display: 'flex', gap: '4px', alignItems: 'center' }}
-                          >
-                            <ImageIcon size={12} /> Preview Report Attachment
-                          </button>
-                        </div>
-                      )}
+                      <div style={{ marginTop: '12px', borderTop: '1px dashed var(--border)', paddingTop: '10px', display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                        <button 
+                          onClick={() => setActivePrintReport(report)}
+                          className="btn btn-secondary"
+                          style={{ padding: '4px 8px', fontSize: '11px', display: 'flex', gap: '4px', alignItems: 'center' }}
+                        >
+                          <Printer size={12} /> Print Report Summary
+                        </button>
+
+                        {report.attachmentUrl && (
+                          <>
+                            <button 
+                              onClick={() => setActivePreviewReportAttachment(report.attachmentUrl || null)}
+                              className="btn btn-secondary"
+                              style={{ padding: '4px 8px', fontSize: '11px', display: 'flex', gap: '4px', alignItems: 'center' }}
+                            >
+                              <ImageIcon size={12} /> Preview Attachment
+                            </button>
+                            <a 
+                              href={report.attachmentUrl} 
+                              download={`report-${report.testName.replace(/\s+/g, '-')}-${report.date}.jpg`}
+                              className="btn btn-secondary"
+                              style={{ padding: '4px 8px', fontSize: '11px', display: 'flex', gap: '4px', alignItems: 'center', textDecoration: 'none' }}
+                            >
+                              <Download size={12} /> Download Attachment
+                            </a>
+                          </>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>

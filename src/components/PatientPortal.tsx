@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { Patient, Appointment, ConsultationRecord, PathologyReport } from '../types/crm';
 import { LogOut, Heart, Calendar, Clock, Clipboard, Pill, Download, Bell, Activity, Camera, Image as ImageIcon, Trash2, Printer } from 'lucide-react';
+import { messaging, requestForToken } from '../lib/firebaseClient';
+import { onMessage } from 'firebase/messaging';
 
 const compressImage = (file: File, maxWidth = 1200, maxHeight = 1200, quality = 0.75): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -66,6 +68,32 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
   const [activePortalTab, setActivePortalTab] = useState<'timeline' | 'medications' | 'appointments' | 'reports'>('timeline');
   const [remindersEnabled, setRemindersEnabled] = useState<boolean>(true);
 
+  useEffect(() => {
+    // If permission is already granted, fetch token on mount
+    if (Notification.permission === 'granted') {
+      requestForToken();
+    }
+
+    // Set up foreground messaging listener
+    let unsubscribe: (() => void) | undefined;
+    if (messaging) {
+      unsubscribe = onMessage(messaging, (payload) => {
+        console.log('Foreground message received: ', payload);
+        if (payload.notification) {
+          const { title, body } = payload.notification;
+          new Notification(title || 'New Notification', {
+            body: body || '',
+            icon: '/favicon.svg'
+          });
+        }
+      });
+    }
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, []);
+
   // Form State for Lab Report upload inside portal
   const [reportTestName, setReportTestName] = useState('');
   const [reportLabName, setReportLabName] = useState('');
@@ -128,8 +156,17 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
     }
     
     if (Notification.permission === 'granted') {
-      setRemindersEnabled(!remindersEnabled);
-      alert('Reminders are active! We will send you notification alerts before your sessions.');
+      const nextState = !remindersEnabled;
+      setRemindersEnabled(nextState);
+      if (nextState) {
+        requestForToken().then(token => {
+          if (token) {
+            alert('Reminders are active! Push notifications are successfully enabled.');
+          } else {
+            alert('Reminders are active! Standard browser alerts will be sent.');
+          }
+        });
+      }
     } else {
       Notification.requestPermission().then(permission => {
         if (permission === 'granted') {
@@ -138,6 +175,7 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
             body: 'You will receive appointment updates and notifications here.',
             icon: '/favicon.ico'
           });
+          requestForToken();
         } else {
           setRemindersEnabled(false);
           alert('Notification access was blocked. Please enable them in browser settings.');

@@ -150,11 +150,11 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
     const file = e.target.files?.[0];
     if (!file) return;
 
-    compressImage(file)
+    compressImage(file, 1000, 1000, 0.5)
       .then((compressedBase64) => {
         const approximateSize = (compressedBase64.length * 3) / 4;
-        if (approximateSize > 2 * 1024 * 1024) {
-          alert('Compressed image exceeds the 2MB size limit. Please select a smaller photo.');
+        if (approximateSize > 800 * 1024) {
+          alert('Report file size exceeds the 800KB size limit. Please upload a smaller scan or photo.');
           return;
         }
         setReportAttachment(compressedBase64);

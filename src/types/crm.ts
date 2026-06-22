@@ -156,6 +156,7 @@ export interface ConsultationRecord {
   notes: string;
   vitals?: VisitVitals;
   prescriptions: PrescriptionItem[];
+  investigations?: string;
 }
 
 export interface PathologyReport {

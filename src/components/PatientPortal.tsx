@@ -452,32 +452,6 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
         </div>
 
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-          <a 
-            href="https://wa.me/917007973087" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            className="btn" 
-            style={{ 
-              padding: '6px 14px', 
-              fontSize: '13px', 
-              display: 'flex', 
-              gap: '8px', 
-              alignItems: 'center', 
-              background: 'hsl(142, 70%, 45%)', 
-              color: 'white', 
-              border: 'none', 
-              borderRadius: '6px', 
-              fontWeight: 600, 
-              textDecoration: 'none', 
-              boxShadow: '0 2px 8px hsla(142, 70%, 45%, 0.25)',
-              transition: 'all 0.2s ease'
-            }}
-          >
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-              <path d="M12.031 2c-5.516 0-9.986 4.47-9.986 9.987 0 1.963.57 3.79 1.547 5.342l-1.592 5.82 5.962-1.563a9.92 9.92 0 0 0 4.069.878c5.516 0 9.987-4.47 9.987-9.986C22.018 6.47 17.547 2 12.03 2zm6.29 13.916c-.253.712-1.464 1.307-2.01 1.353-.5.042-1.14.074-3.26-.803-2.71-1.118-4.43-3.87-4.565-4.053-.13-.183-1.097-1.458-1.097-2.782 0-1.324.693-1.977.94-2.233.25-.256.544-.32.727-.32a.72.72 0 0 1 .525.24c.2.257.693 1.688.75 1.81.06.12.1.26.02.42-.08.16-.16.26-.26.38a19.16 19.16 0 0 0-.29.35c-.11.12-.22.25-.1.46.12.2.53.88 1.14 1.43.79.7 1.45 1.18 1.66 1.28.21.1.33.08.46-.06.13-.14.54-.63.69-.85.14-.21.29-.18.49-.1.2.08 1.26.6 1.48.71.21.1.36.16.41.25.05.09.05.53-.2 1.24z"/>
-            </svg>
-            WhatsApp Assistant
-          </a>
           <button onClick={onLogout} className="btn btn-secondary" style={{ padding: '6px 12px', fontSize: '13px', display: 'flex', gap: '6px', alignItems: 'center' }}>
             <LogOut size={14} /> Log Out
           </button>
@@ -618,6 +592,11 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
                             <strong>Notes:</strong> {con.notes}
                           </div>
                         )}
+                        {con.investigations && (
+                          <div style={{ fontSize: '13px', marginTop: '8px', color: 'var(--text-main)' }}>
+                            <strong>Advised Investigations:</strong> <span style={{ color: 'var(--secondary)', fontWeight: 600 }}>{con.investigations}</span>
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -737,9 +716,37 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
 
             {/* Appointments list */}
             <div className="glass-card" style={{ padding: '20px', borderRadius: '14px', border: '1px solid var(--border)' }}>
-              <h3 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Calendar size={18} style={{ color: 'var(--primary)' }} /> Upcoming Scheduled Visits
-              </h3>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
+                <h3 style={{ fontSize: '16px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px', margin: 0 }}>
+                  <Calendar size={18} style={{ color: 'var(--primary)' }} /> Upcoming Scheduled Visits
+                </h3>
+                <a 
+                  href="https://wa.me/917007973087" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="btn" 
+                  style={{ 
+                    padding: '6px 14px', 
+                    fontSize: '13px', 
+                    display: 'flex', 
+                    gap: '8px', 
+                    alignItems: 'center', 
+                    background: 'hsl(142, 70%, 45%)', 
+                    color: 'white', 
+                    border: 'none', 
+                    borderRadius: '6px', 
+                    fontWeight: 600, 
+                    textDecoration: 'none', 
+                    boxShadow: '0 2px 8px hsla(142, 70%, 45%, 0.25)',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                    <path d="M12.031 2c-5.516 0-9.986 4.47-9.986 9.987 0 1.963.57 3.79 1.547 5.342l-1.592 5.82 5.962-1.563a9.92 9.92 0 0 0 4.069.878c5.516 0 9.987-4.47 9.987-9.986C22.018 6.47 17.547 2 12.03 2zm6.29 13.916c-.253.712-1.464 1.307-2.01 1.353-.5.042-1.14.074-3.26-.803-2.71-1.118-4.43-3.87-4.565-4.053-.13-.183-1.097-1.458-1.097-2.782 0-1.324.693-1.977.94-2.233.25-.256.544-.32.727-.32a.72.72 0 0 1 .525.24c.2.257.693 1.688.75 1.81.06.12.1.26.02.42-.08.16-.16.26-.26.38a19.16 19.16 0 0 0-.29.35c-.11.12-.22.25-.1.46.12.2.53.88 1.14 1.43.79.7 1.45 1.18 1.66 1.28.21.1.33.08.46-.06.13-.14.54-.63.69-.85.14-.21.29-.18.49-.1.2.08 1.26.6 1.48.71.21.1.36.16.41.25.05.09.05.53-.2 1.24z"/>
+                  </svg>
+                  Book Appointment via WhatsApp
+                </a>
+              </div>
               {myAppointments.length === 0 ? (
                 <p style={{ color: 'var(--text-light)', fontSize: '13px', textAlign: 'center', padding: '20px' }}>No upcoming appointments scheduled.</p>
               ) : (

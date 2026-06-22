@@ -157,6 +157,13 @@ export interface ConsultationRecord {
   vitals?: VisitVitals;
   prescriptions: PrescriptionItem[];
   investigations?: string;
+  nextAppointment?: {
+    date: string;
+    time: string;
+    clinic: string;
+    doctorName: string;
+    purpose: string;
+  };
 }
 
 export interface PathologyReport {

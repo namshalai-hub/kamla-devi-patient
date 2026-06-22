@@ -391,6 +391,26 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
             </tbody>
           </table>
 
+          {activePrintRx.investigations && (
+            <div style={{ marginTop: '20px', borderTop: '1px dashed var(--border)', paddingTop: '12px' }}>
+              <strong style={{ fontSize: '13px', textTransform: 'uppercase', color: 'var(--text-light)' }}>Advised Investigations:</strong>
+              <p style={{ whiteSpace: 'pre-wrap', marginTop: '4px', fontSize: '13px', color: 'var(--text-main)', margin: 0 }}>{activePrintRx.investigations}</p>
+            </div>
+          )}
+
+          {activePrintRx.nextAppointment && (
+            <div style={{ marginTop: '20px', borderTop: '1px dashed var(--border)', paddingTop: '12px', background: 'var(--bg-app)', border: '1px solid var(--border)', padding: '10px 14px', borderRadius: '6px' }}>
+              <strong style={{ fontSize: '13px', textTransform: 'uppercase', color: 'var(--text-light)', display: 'block', marginBottom: '6px' }}>Next Scheduled Appointment:</strong>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px 24px', fontSize: '12px', color: 'var(--text-main)' }}>
+                <span><strong>Date:</strong> {activePrintRx.nextAppointment.date}</span>
+                <span><strong>Time:</strong> {activePrintRx.nextAppointment.time}</span>
+                <span><strong>Clinic:</strong> {activePrintRx.nextAppointment.clinic}</span>
+                {activePrintRx.nextAppointment.doctorName && <span><strong>Doctor:</strong> {activePrintRx.nextAppointment.doctorName}</span>}
+                {activePrintRx.nextAppointment.purpose && <span><strong>Purpose:</strong> {activePrintRx.nextAppointment.purpose}</span>}
+              </div>
+            </div>
+          )}
+
           <div className="prescription-signature" style={{ pageBreakInside: 'avoid' }}>
             <div className="signature-line"></div>
             <p style={{ fontSize: '12px', fontWeight: 600, marginTop: '8px' }}>{activePrintRx.doctorName}</p>
@@ -452,6 +472,31 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
         </div>
 
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <a 
+            href="https://wa.me/917007973087" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="btn" 
+            style={{ 
+              padding: '6px 12px', 
+              fontSize: '13px', 
+              display: 'flex', 
+              gap: '6px', 
+              alignItems: 'center', 
+              background: 'hsl(142, 70%, 45%)', 
+              color: 'white', 
+              border: 'none', 
+              borderRadius: '6px', 
+              fontWeight: 600, 
+              textDecoration: 'none', 
+              boxShadow: '0 2px 6px hsla(142, 70%, 45%, 0.2)'
+            }}
+          >
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+              <path d="M12.031 2c-5.516 0-9.986 4.47-9.986 9.987 0 1.963.57 3.79 1.547 5.342l-1.592 5.82 5.962-1.563a9.92 9.92 0 0 0 4.069.878c5.516 0 9.987-4.47 9.987-9.986C22.018 6.47 17.547 2 12.03 2zm6.29 13.916c-.253.712-1.464 1.307-2.01 1.353-.5.042-1.14.074-3.26-.803-2.71-1.118-4.43-3.87-4.565-4.053-.13-.183-1.097-1.458-1.097-2.782 0-1.324.693-1.977.94-2.233.25-.256.544-.32.727-.32a.72.72 0 0 1 .525.24c.2.257.693 1.688.75 1.81.06.12.1.26.02.42-.08.16-.16.26-.26.38a19.16 19.16 0 0 0-.29.35c-.11.12-.22.25-.1.46.12.2.53.88 1.14 1.43.79.7 1.45 1.18 1.66 1.28.21.1.33.08.46-.06.13-.14.54-.63.69-.85.14-.21.29-.18.49-.1.2.08 1.26.6 1.48.71.21.1.36.16.41.25.05.09.05.53-.2 1.24z"/>
+            </svg>
+            Chat on WhatsApp
+          </a>
           <button onClick={onLogout} className="btn btn-secondary" style={{ padding: '6px 12px', fontSize: '13px', display: 'flex', gap: '6px', alignItems: 'center' }}>
             <LogOut size={14} /> Log Out
           </button>

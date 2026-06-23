@@ -376,10 +376,11 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
           <table className="medications-table">
             <thead>
               <tr>
-                <th>Medication</th>
-                <th>Frequency</th>
-                <th>Duration</th>
-                <th>Special Instructions</th>
+                <th style={{ width: '30%' }}>Medication</th>
+                <th style={{ width: '15%' }}>Dosing</th>
+                <th style={{ width: '15%' }}>Frequency</th>
+                <th style={{ width: '15%' }}>Duration</th>
+                <th style={{ width: '25%' }}>Special Instructions</th>
               </tr>
             </thead>
             <tbody>
@@ -387,8 +388,8 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
                 <tr key={med.id}>
                   <td style={{ fontWeight: 'bold' }}>
                     {idx + 1}. {med.name.toUpperCase()}
-                    {med.dosage ? ` (${med.dosage})` : ''}
                   </td>
+                  <td>{med.dosage || '—'}</td>
                   <td>{med.frequency}</td>
                   <td>{med.duration}</td>
                   <td style={{ fontStyle: 'italic', fontSize: '12px', color: 'var(--text-muted)' }}>{med.notes || ''}</td>

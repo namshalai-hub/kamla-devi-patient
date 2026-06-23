@@ -332,7 +332,6 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
               <span className="prescription-print-title" style={{ fontSize: '14px', fontWeight: 700, color: 'var(--primary)' }}>PRESCRIPTION CASE CARD</span>
               <div style={{ display: 'flex', gap: '20px', fontSize: '12px', color: 'var(--text-muted)' }}>
                 <span><strong>Date:</strong> {activePrintRx.date}</span>
-                <span><strong>Rx Ref:</strong> {activePrintRx.id}</span>
               </div>
             </div>
           </div>
@@ -367,10 +366,17 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
             <p style={{ fontWeight: 600, fontSize: '15px', color: 'var(--text-main)', marginTop: '4px' }}>{activePrintRx.diagnosis}</p>
           </div>
 
+          {activePrintRx.advice && (
+            <div style={{ marginBottom: '20px', borderBottom: '1px dashed var(--border)', paddingBottom: '12px' }}>
+              <strong style={{ fontSize: '13px', textTransform: 'uppercase', color: 'var(--text-light)' }}>Advice / General Recommendations:</strong>
+              <p style={{ whiteSpace: 'pre-wrap', marginTop: '4px', fontSize: '13px', color: 'var(--text-main)', margin: 0 }}>{activePrintRx.advice}</p>
+            </div>
+          )}
+
           <table className="medications-table">
             <thead>
               <tr>
-                <th>Medication / Formula</th>
+                <th>Medication</th>
                 <th>Frequency</th>
                 <th>Duration</th>
                 <th>Special Instructions</th>
@@ -398,13 +404,6 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
             </div>
           )}
 
-          {activePrintRx.advice && (
-            <div style={{ marginTop: '20px', borderTop: '1px dashed var(--border)', paddingTop: '12px' }}>
-              <strong style={{ fontSize: '13px', textTransform: 'uppercase', color: 'var(--text-light)' }}>Advice / General Recommendations:</strong>
-              <p style={{ whiteSpace: 'pre-wrap', marginTop: '4px', fontSize: '13px', color: 'var(--text-main)', margin: 0 }}>{activePrintRx.advice}</p>
-            </div>
-          )}
-
           {activePrintRx.nextAppointment && (
             <div style={{ marginTop: '20px', borderTop: '1px dashed var(--border)', paddingTop: '12px', background: 'var(--bg-app)', border: '1px solid var(--border)', padding: '10px 14px', borderRadius: '6px' }}>
               <strong style={{ fontSize: '13px', textTransform: 'uppercase', color: 'var(--text-light)', display: 'block', marginBottom: '6px' }}>Next Scheduled Appointment:</strong>
@@ -421,7 +420,10 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
           <div className="prescription-signature" style={{ pageBreakInside: 'avoid' }}>
             <div className="signature-line"></div>
             <p style={{ fontSize: '12px', fontWeight: 600, marginTop: '8px' }}>{activePrintRx.doctorName}</p>
-            <p style={{ fontSize: '10px', color: 'var(--text-light)' }}>MBBS, MD, (Obs&Gyn) &bull; Regd no. 36782</p>
+            <p style={{ fontSize: '11px', color: '#0056b3', fontWeight: 500, marginTop: '4px', lineHeight: 1.4 }}>
+              MBBS, MD (Obs & Gyn)<br />
+              Regd no. 36782
+            </p>
           </div>
 
           <div className="prescription-actions" style={{ display: 'flex', gap: '12px', marginTop: '32px', borderTop: '1px solid var(--border)', paddingTop: '16px' }}>

@@ -533,7 +533,7 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
                 G{patient.obstetricHistory.gravidity} P{patient.obstetricHistory.parity} A{patient.obstetricHistory.abortions} L{patient.obstetricHistory.living}
               </strong>
             </div>
-            {patient.maternityRecord?.eddDate && (
+            {patient.status === 'Prenatal' && patient.maternityRecord?.eddDate && (
               <div style={{ background: 'var(--bg-app)', padding: '12px', borderRadius: '10px', fontSize: '13px' }}>
                 <span style={{ color: 'var(--text-light)', fontSize: '11px', display: 'block', marginBottom: '2px' }}>Estimated Delivery (EDD)</span>
                 <strong style={{ fontSize: '15px', color: 'var(--primary)' }}>{patient.maternityRecord.eddDate}</strong>

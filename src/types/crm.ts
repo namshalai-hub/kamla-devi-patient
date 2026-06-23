@@ -116,12 +116,15 @@ export interface PrenatalVitalEntry {
 }
 
 export interface MaternityRecord {
+  id: string;
   lmpDate: string;  // Last Menstrual Period
   eddDate: string;  // Calculated Estimated Date of Delivery
   isHighRisk: boolean;
   highRiskReasons: string[];
   trimesterChecklist: TrimesterChecklist;
   prenatalVitals: PrenatalVitalEntry[];
+  status: 'Active' | 'Completed' | 'Cancelled';
+  notes?: string;
 }
 
 export interface PrescriptionItem {
@@ -205,6 +208,7 @@ export interface Patient {
   ivfCycles: IVFCycleLog[];
   iuiCycles: IUICycleLog[];
   maternityRecord: MaternityRecord | null;
+  maternityRecords?: MaternityRecord[];
   consultations: ConsultationRecord[];
   pathologyReports?: PathologyReport[];
   procedures?: PatientProcedure[];

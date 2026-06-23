@@ -377,10 +377,10 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
               </tr>
             </thead>
             <tbody>
-              {activePrintRx.prescriptions.map((med: any) => (
+              {activePrintRx.prescriptions.map((med: any, idx: number) => (
                 <tr key={med.id}>
                   <td style={{ fontWeight: 'bold' }}>
-                    {med.name}
+                    {idx + 1}. {med.name.toUpperCase()}
                     {med.dosage ? ` (${med.dosage})` : ''}
                   </td>
                   <td>{med.frequency}</td>
@@ -395,6 +395,13 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
             <div style={{ marginTop: '20px', borderTop: '1px dashed var(--border)', paddingTop: '12px' }}>
               <strong style={{ fontSize: '13px', textTransform: 'uppercase', color: 'var(--text-light)' }}>Advised Investigations:</strong>
               <p style={{ whiteSpace: 'pre-wrap', marginTop: '4px', fontSize: '13px', color: 'var(--text-main)', margin: 0 }}>{activePrintRx.investigations}</p>
+            </div>
+          )}
+
+          {activePrintRx.advice && (
+            <div style={{ marginTop: '20px', borderTop: '1px dashed var(--border)', paddingTop: '12px' }}>
+              <strong style={{ fontSize: '13px', textTransform: 'uppercase', color: 'var(--text-light)' }}>Advice / General Recommendations:</strong>
+              <p style={{ whiteSpace: 'pre-wrap', marginTop: '4px', fontSize: '13px', color: 'var(--text-main)', margin: 0 }}>{activePrintRx.advice}</p>
             </div>
           )}
 
@@ -414,7 +421,7 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
           <div className="prescription-signature" style={{ pageBreakInside: 'avoid' }}>
             <div className="signature-line"></div>
             <p style={{ fontSize: '12px', fontWeight: 600, marginTop: '8px' }}>{activePrintRx.doctorName}</p>
-            <p style={{ fontSize: '10px', color: 'var(--text-light)' }}>Licensed Obstetrician / Gynecologist</p>
+            <p style={{ fontSize: '10px', color: 'var(--text-light)' }}>MBBS, MD, (Obs&Gyn) &bull; Regd no. 36782</p>
           </div>
 
           <div className="prescription-actions" style={{ display: 'flex', gap: '12px', marginTop: '32px', borderTop: '1px solid var(--border)', paddingTop: '16px' }}>
@@ -678,7 +685,7 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '12px' }}>
                   {rxConsultations[0].prescriptions.map((med) => (
                     <div key={med.id} style={{ background: 'var(--bg-app)', border: '1px solid var(--border)', padding: '16px', borderRadius: '10px' }}>
-                      <h4 style={{ fontWeight: 700, fontSize: '15px', color: 'var(--primary)', marginBottom: '8px' }}>{med.name}</h4>
+                      <h4 style={{ fontWeight: 700, fontSize: '15px', color: 'var(--primary)', marginBottom: '8px' }}>{med.name.toUpperCase()}</h4>
                       <div style={{ fontSize: '13px', display: 'flex', flexDirection: 'column', gap: '6px', color: 'var(--text-main)' }}>
                         <div><strong>Frequency:</strong> {med.frequency}</div>
                         <div><strong>Duration:</strong> {med.duration}</div>

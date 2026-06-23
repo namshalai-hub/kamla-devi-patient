@@ -167,6 +167,7 @@ export interface ConsultationRecord {
     doctorName: string;
     purpose: string;
   };
+  advice?: string;
 }
 
 export interface PathologyReport {
@@ -232,6 +233,7 @@ export interface PreconceptionChecklist {
   items: PreconceptionChecklistItem[];
   husbandEvaluated?: boolean;
   notes?: string;
+  partnerPrescription?: PrescriptionItem[];
 }
 
 export interface IVFFreezingLog {

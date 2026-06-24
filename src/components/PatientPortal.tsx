@@ -4,6 +4,69 @@ import { LogOut, Heart, Calendar, Clock, Clipboard, Pill, Download, Bell, Activi
 import { messaging, requestForToken } from '../lib/firebaseClient';
 import { onMessage } from 'firebase/messaging';
 
+const formatDateDMY = (dateInput: string | Date | undefined | null): string => {
+  if (!dateInput) return '—';
+  try {
+    let d: Date;
+    if (typeof dateInput === 'string') {
+      const trimmed = dateInput.trim();
+      if (!trimmed) return '—';
+      if (/^\d{2}-\d{2}-\d{4}$/.test(trimmed)) return trimmed;
+      if (/^\d{2}\/\d{2}\/\d{4}$/.test(trimmed)) return trimmed.replace(/\//g, '-');
+      const parts = trimmed.split('-');
+      if (parts.length === 3 && parts[0].length === 4) {
+        d = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+      } else {
+        d = new Date(trimmed);
+      }
+    } else {
+      d = dateInput;
+    }
+    if (isNaN(d.getTime())) return String(dateInput);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${day}-${month}-${year}`;
+  } catch (e) {
+    return String(dateInput);
+  }
+};
+
+const formatTime12h = (timeStr: string | undefined | null): string => {
+  if (!timeStr) return '—';
+  try {
+    const parts = timeStr.trim().split(':');
+    if (parts.length >= 2) {
+      let hours = parseInt(parts[0], 10);
+      const minutes = parts[1].substring(0, 2);
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12;
+      return `${hours}:${minutes} ${ampm}`;
+    }
+  } catch (e) {
+    // ignore
+  }
+  return timeStr;
+};
+
+const getDayName = (dateStr: string | undefined | null): string => {
+  if (!dateStr) return '';
+  try {
+    const parts = dateStr.split('-');
+    let d: Date;
+    if (parts.length === 3 && parts[0].length === 4) {
+      d = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+    } else {
+      d = new Date(dateStr);
+    }
+    if (isNaN(d.getTime())) return '';
+    return d.toLocaleDateString('en-US', { weekday: 'short' });
+  } catch (e) {
+    return '';
+  }
+};
+
 const compressImage = (file: File, maxWidth = 1200, maxHeight = 1200, quality = 0.75): Promise<string> => {
   return new Promise((resolve, reject) => {
     if (!file.type.startsWith('image/')) {
@@ -250,13 +313,13 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
               alt="Kamla Devi Hospital Letterhead" 
               style={{ width: '100%', height: 'auto', borderRadius: '4px', display: 'block' }} 
             />
-            <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '2px solid var(--border)', paddingBottom: '8px', marginTop: '8px' }}>
-              <span className="prescription-print-title" style={{ fontSize: '14px', fontWeight: 700, color: 'var(--primary)' }}>PATHOLOGY & LABORATORY REPORT</span>
-              <div style={{ display: 'flex', gap: '20px', fontSize: '12px', color: 'var(--text-muted)' }}>
-                <span><strong>Date:</strong> {activePrintReport.date}</span>
-                <span><strong>Report Ref:</strong> {activePrintReport.id}</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '2px solid var(--border)', paddingBottom: '8px', marginTop: '8px' }}>
+                <span className="prescription-print-title" style={{ fontSize: '14px', fontWeight: 700, color: 'var(--primary)' }}>PATHOLOGY & LABORATORY REPORT</span>
+                <div style={{ display: 'flex', gap: '20px', fontSize: '12px', color: 'var(--text-muted)' }}>
+                  <span><strong>Date:</strong> {formatDateDMY(activePrintReport.date)}</span>
+                  <span><strong>Report Ref:</strong> {activePrintReport.id}</span>
+                </div>
               </div>
-            </div>
           </div>
 
           <div className="prescription-patient-info" style={{ gridTemplateColumns: 'repeat(3, 1fr)', marginBottom: '20px' }}>
@@ -328,12 +391,12 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
               alt="Kamla Devi Hospital Letterhead" 
               style={{ width: '100%', height: 'auto', borderRadius: '4px', display: 'block' }} 
             />
-            <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '2px solid var(--border)', paddingBottom: '8px', marginTop: '8px' }}>
-              <span className="prescription-print-title" style={{ fontSize: '14px', fontWeight: 700, color: 'var(--primary)' }}>PRESCRIPTION CASE CARD</span>
-              <div style={{ display: 'flex', gap: '20px', fontSize: '12px', color: 'var(--text-muted)' }}>
-                <span><strong>Date:</strong> {activePrintRx.date}</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '2px solid var(--border)', paddingBottom: '8px', marginTop: '8px' }}>
+                <span className="prescription-print-title" style={{ fontSize: '14px', fontWeight: 700, color: 'var(--primary)' }}>PRESCRIPTION CASE CARD</span>
+                <div style={{ display: 'flex', gap: '20px', fontSize: '12px', color: 'var(--text-muted)' }}>
+                  <span><strong>Date:</strong> {formatDateDMY(activePrintRx.date)}</span>
+                </div>
               </div>
-            </div>
           </div>
 
           <div className="prescription-patient-info" style={{ gridTemplateColumns: 'repeat(3, 1fr)', marginBottom: '20px' }}>
@@ -343,6 +406,7 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
             <div><strong>Obstetric Score:</strong> G{patient.obstetricHistory.gravidity} P{patient.obstetricHistory.parity} A{patient.obstetricHistory.abortions} L{patient.obstetricHistory.living}</div>
             <div><strong>Allergies:</strong> {patient.allergies.join(', ') || 'NKDA'}</div>
             <div><strong>Doctor:</strong> {activePrintRx.doctorName}</div>
+            <div><strong>Symptoms:</strong> {activePrintRx.symptoms || 'None reported'}</div>
           </div>
 
           {activePrintRx.vitals && (
@@ -409,8 +473,8 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
             <div style={{ marginTop: '20px', borderTop: '1px dashed var(--border)', paddingTop: '12px', background: 'var(--bg-app)', border: '1px solid var(--border)', padding: '10px 14px', borderRadius: '6px' }}>
               <strong style={{ fontSize: '13px', textTransform: 'uppercase', color: 'var(--text-light)', display: 'block', marginBottom: '6px' }}>Next Scheduled Appointment:</strong>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px 24px', fontSize: '12px', color: 'var(--text-main)' }}>
-                <span><strong>Date:</strong> {activePrintRx.nextAppointment.date}</span>
-                <span><strong>Time:</strong> {activePrintRx.nextAppointment.time}</span>
+                <span><strong>Date:</strong> {formatDateDMY(activePrintRx.nextAppointment.date)}</span>
+                <span><strong>Time:</strong> {formatTime12h(activePrintRx.nextAppointment.time)}</span>
                 <span><strong>Clinic:</strong> {activePrintRx.nextAppointment.clinic}</span>
                 {activePrintRx.nextAppointment.doctorName && <span><strong>Doctor:</strong> {activePrintRx.nextAppointment.doctorName}</span>}
                 {activePrintRx.nextAppointment.purpose && <span><strong>Purpose:</strong> {activePrintRx.nextAppointment.purpose}</span>}
@@ -604,7 +668,7 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
                     <div key={v.id} style={{ background: 'var(--bg-app)', border: '1px solid var(--border)', padding: '12px 16px', borderRadius: '8px', fontSize: '13px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 600 }}>
                         <span>Gestation: {v.gestationalAge}</span>
-                        <span style={{ color: 'var(--text-light)', fontSize: '12px' }}>{v.date}</span>
+                        <span style={{ color: 'var(--text-light)', fontSize: '12px' }}>{formatDateDMY(v.date)}</span>
                       </div>
                       <div style={{ color: 'var(--text-muted)', fontSize: '12px', marginTop: '4px' }}>
                         BP: {v.systolicBP}/{v.diastolicBP} mmHg • Weight: {v.weightKg} kg • HR: {v.heartRate} bpm
@@ -632,7 +696,7 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
                       <div style={{ background: 'var(--bg-app)', border: '1px solid var(--border)', padding: '16px', borderRadius: '10px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                           <span style={{ fontWeight: 600 }}>{con.doctorName}</span>
-                          <span style={{ color: 'var(--text-light)', fontSize: '12px' }}>{con.date}</span>
+                          <span style={{ color: 'var(--text-light)', fontSize: '12px' }}>{formatDateDMY(con.date)}</span>
                         </div>
                         {con.symptoms && (
                           <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
@@ -722,7 +786,7 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
                           <div>
                             <div style={{ fontWeight: 600, fontSize: '14px' }}>Prescription Case Card</div>
                             <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>
-                              Date: {con.date} • Doctor: {con.doctorName} • Diagnosis: {con.diagnosis}
+                              Date: {formatDateDMY(con.date)} • Doctor: {con.doctorName} • Diagnosis: {con.diagnosis}
                             </div>
                           </div>
                           <button 
@@ -832,15 +896,15 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
                           </span>
                           <strong style={{ fontSize: '15px' }}>{app.purpose}</strong>
                         </div>
-                        <div style={{ display: 'flex', gap: '14px', color: 'var(--text-muted)', fontSize: '12px', marginTop: '6px' }}>
+                        <div style={{ display: 'flex', gap: '14px', color: 'var(--text-muted)', fontSize: '12px', marginTop: '6px', flexWrap: 'wrap' }}>
                           <span style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-                            <Calendar size={12} /> {app.date}
+                            <Calendar size={12} /> {formatDateDMY(app.date)} ({getDayName(app.date)})
                           </span>
                           <span style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-                            <Clock size={12} /> {app.time}
+                            <Clock size={12} /> {formatTime12h(app.time)}
                           </span>
                           <span>Doctor: {app.doctorName}</span>
-                          <span>Location: {app.clinic}</span>
+                          <span>Location: {app.clinic === 'Kamla Devi Hospital' ? 'KDH' : 'TSF'}</span>
                         </div>
                       </div>
 
@@ -891,7 +955,7 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
                           </span>
                         </div>
                         <span style={{ fontSize: '12px', background: 'var(--bg-card-solid)', border: '1px solid var(--border)', padding: '2px 8px', borderRadius: '12px', fontWeight: 500 }}>
-                          {report.date}
+                          {formatDateDMY(report.date)}
                         </span>
                       </div>
 

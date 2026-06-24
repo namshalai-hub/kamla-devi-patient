@@ -406,7 +406,6 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
             <div><strong>Obstetric Score:</strong> G{patient.obstetricHistory.gravidity} P{patient.obstetricHistory.parity} A{patient.obstetricHistory.abortions} L{patient.obstetricHistory.living}</div>
             <div><strong>Allergies:</strong> {patient.allergies.join(', ') || 'NKDA'}</div>
             <div><strong>Doctor:</strong> {activePrintRx.doctorName}</div>
-            <div><strong>Symptoms:</strong> {activePrintRx.symptoms || 'None reported'}</div>
           </div>
 
           {activePrintRx.vitals && (
@@ -425,8 +424,15 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
             </div>
           )}
 
+          {activePrintRx.symptoms && (
+            <div className="rx-symptoms-block" style={{ marginBottom: '16px' }}>
+              <strong style={{ fontSize: '13px', textTransform: 'uppercase', color: 'var(--text-light)' }}>Symptoms:</strong>
+              <p style={{ fontWeight: 600, fontSize: '15px', color: 'var(--text-main)', marginTop: '4px' }}>{activePrintRx.symptoms}</p>
+            </div>
+          )}
+
           <div className="rx-diagnosis-block" style={{ marginBottom: '16px' }}>
-            <strong style={{ fontSize: '13px', textTransform: 'uppercase', color: 'var(--text-light)' }}>Primary Diagnosis:</strong>
+            <strong style={{ fontSize: '13px', textTransform: 'uppercase', color: 'var(--text-light)' }}>Diagnosis:</strong>
             <p style={{ fontWeight: 600, fontSize: '15px', color: 'var(--text-main)', marginTop: '4px' }}>{activePrintRx.diagnosis}</p>
           </div>
 

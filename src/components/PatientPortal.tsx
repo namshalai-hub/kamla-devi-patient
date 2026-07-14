@@ -133,7 +133,7 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
 
   useEffect(() => {
     // If permission is already granted, fetch token on mount
-    if (Notification.permission === 'granted') {
+    if (typeof window !== 'undefined' && typeof Notification !== 'undefined' && Notification.permission === 'granted') {
       requestForToken();
     }
 
@@ -142,7 +142,7 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
     if (messaging) {
       unsubscribe = onMessage(messaging, (payload) => {
         console.log('Foreground message received: ', payload);
-        if (payload.notification) {
+        if (payload.notification && typeof Notification !== 'undefined') {
           const { title, body } = payload.notification;
           new Notification(title || 'New Notification', {
             body: body || '',

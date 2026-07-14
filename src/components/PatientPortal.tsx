@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { Patient, Appointment, ConsultationRecord, PathologyReport } from '../types/crm';
-import { LogOut, Heart, Calendar, Clock, Clipboard, Pill, Download, Bell, Activity, Camera, Image as ImageIcon, Trash2, Printer } from 'lucide-react';
+import { LogOut, Heart, Calendar, Clock, Clipboard, Pill, Download, Bell, Activity, Camera, Image as ImageIcon, Trash2, Printer, Folder, ExternalLink } from 'lucide-react';
 import { messaging, requestForToken } from '../lib/firebaseClient';
 import { onMessage } from 'firebase/messaging';
 
@@ -930,7 +930,57 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
         )}
 
         {activePortalTab === 'reports' && (
-          <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '24px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            {patient.googleDriveFolderUrl && (
+              <div 
+                className="glass-card" 
+                style={{ 
+                  padding: '20px', 
+                  borderRadius: '14px', 
+                  border: '1px solid var(--border)', 
+                  background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(139, 92, 246, 0.02))',
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: '16px'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ background: 'var(--primary-light)', color: 'var(--primary)', padding: '10px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: '44px', minHeight: '44px' }}>
+                    <Folder size={24} />
+                  </div>
+                  <div>
+                    <h3 style={{ fontSize: '15px', fontWeight: 700, margin: 0, color: 'var(--text-main)' }}>Your Google Drive Medical Reports Folder</h3>
+                    <p style={{ fontSize: '12px', color: 'var(--text-light)', margin: '4px 0 0 0' }}>
+                      All your pathology reports, ultrasound scans, and prescriptions are safely stored in this cloud folder.
+                    </p>
+                  </div>
+                </div>
+                <a
+                  href={patient.googleDriveFolderUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn btn-primary"
+                  style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '6px', 
+                    padding: '8px 16px', 
+                    background: 'linear-gradient(135deg, var(--primary), hsl(262, 70%, 55%))', 
+                    border: 'none',
+                    color: '#fff',
+                    textDecoration: 'none',
+                    borderRadius: '6px',
+                    fontWeight: 600,
+                    fontSize: '13px'
+                  }}
+                >
+                  <ExternalLink size={16} /> Open Drive Folder
+                </a>
+              </div>
+            )}
+            <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '24px' }}>
             {/* Left Side: Pathology Report History */}
             <div className="glass-card" style={{ padding: '20px', borderRadius: '14px', border: '1px solid var(--border)' }}>
               <h3 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -1122,7 +1172,8 @@ export const PatientPortal: React.FC<PatientPortalProps> = ({ patient, appointme
               </form>
             </div>
           </div>
-        )}
+        </div>
+      )}
       </div>
 
       {/* Attachment Preview Modal Overlay */}

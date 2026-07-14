@@ -216,6 +216,7 @@ export interface Patient {
   preconceptionChecklist?: PreconceptionChecklist;
   clinic: 'Kamla Devi Hospital' | 'T.S. Mishra Fertility Centre';
   appointments?: Appointment[];
+  googleDriveFolderUrl?: string;
 }
 
 export interface PreconceptionChecklistItem {
